@@ -20,4 +20,8 @@ public class comm {
     public String hhhh(){
         return "22222";
     }
+
+    public String test2() {
+        return "我带你们打2";
+    }
 }
