@@ -10,4 +10,8 @@ public class comm {
         System.out.println("哈哈哈");
         System.out.println("123123132");
     }
+
+    public String test1() {
+        return "我带你们打";
+    }
 }
