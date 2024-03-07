@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 注意：文件名必须跟Dao类名字一致，因为是根据文件名做关联。 -->
+<mapper namespace="com.xz.library.admin.mapper.JdNewsInfoMapper">
+    <insert id="jdNewsInfoInsert">
+        INSERT INTO `news_info` (
+        `title`,
+        `time`,
+        `src`,
+        `category`,
+        `pic`,
+        `content`,
+        `url`,
+        `weburl`,
+        `create_time`,
+        `channel`)
+        VALUES
+        <foreach collection="list" item="data" separator=",">
+            (#{data.title},
+            #{data.time},
+            #{data.src},
+            #{data.category},
+            #{data.pic},
+            #{data.content},
+            #{data.url},
+            #{data.weburl},
+            #{data.createTime},
+            #{data.channel})
+        </foreach>
+    </insert>
+    <select id="query" resultType="com.xz.library.admin.entity.RegisterInfo">
+        select ua.user_name AS userName,
+               ua.nickname
+        from user_account ua
+    </select>
+
+    <select id="queryJdNewsDetails" resultType="com.xz.library.admin.entity.JdNewsInfo">
+        SELECT ni.id,
+               ni.title,
+               ni.time,
+               ni.src,
+               ni.category,
+               ni.pic,
+               ni.content,
+               ni.url,
+               ni.weburl,
+               ni.channel
+        FROM news_info ni
+        WHERE ni.channel = #{channel}
+        ORDER BY ni.id DESC
+    </select>
+
+    <select id="getNewsTitle" resultType="java.lang.String">
+        SELECT ni.title
+        FROM news_info ni
+    </select>
+
+    <select id="queryGiveLikeNumber"
+            resultType="java.lang.Integer">
+
+        SELECT count(gli.id) AS giveLikeNumber
+        FROM give_like_info gli
+        LEFT JOIN news_info ni ON ni.id = gli.news_id
+        WHERE gli.news_id = #{newsId};
+    </select>
+
+
+    <select id="queryCollectNumber" resultType="java.lang.Integer">
+
+        SELECT count(ci.id) AS collectNumber
+        FROM collect_info ci
+        LEFT JOIN news_info ni ON ci.news_id = ni.id
+        WHERE ci.news_id = #{newsId};
+    </select>
+
+</mapper>

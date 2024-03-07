@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 注意：文件名必须跟Dao类名字一致，因为是根据文件名做关联。 -->
+<mapper namespace="com.xz.library.admin.mapper.CollectInfoMapper">
+    <select id="queryMyCollect" resultType="com.xz.library.admin.entity.result.MyCollectVO">
+        SELECT
+            ci.news_id AS newsId,
+            ci.create_time AS createTime,
+            ni.title
+        FROM
+            collect_info ci
+        LEFT JOIN news_info ni ON ni.id = ci.news_id
+        WHERE
+            ci.user_id = #{userId}
+
+    </select>
+
+    <select id="aa">
+        SELECT
+	ua.nickname,
+	fua.nickname AS beNickname,
+	ufuc.user_id AS userId,
+	ufuc.be_user_id AS beUserId,
+	ufuc.content,
+	ufuc.create_time AS createTime
+FROM
+	user_for_user_comment ufuc
+LEFT JOIN user_account ua ON ufuc.user_id = ua.id
+LEFT JOIN user_account fua ON ufuc.be_user_id = fua.id
+WHERE
+	ufuc.news_id = 12
+AND ufuc.comment_id = 1
+
+    </select>
+
+
+    <select id="whetherCollect" parameterType="com.xz.library.admin.entity.param.QueryGiveLikeRecordParam"
+            resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            news_info ni
+        LEFT JOIN collect_info ci ON ci.news_id = ni.id
+        LEFT JOIN user_account ua ON ua.id = ci.user_id
+        WHERE
+            ni.id = #{newsId}
+        AND
+            ci.user_id = #{userId}
+    </select>
+</mapper>

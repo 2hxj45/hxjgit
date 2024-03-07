@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 注意：文件名必须跟Dao类名字一致，因为是根据文件名做关联。 -->
+<mapper namespace="com.xz.library.admin.mapper.UserCommentMapper">
+    <select id="queryUserComment" resultType="com.xz.library.admin.entity.result.UserCommentVO"
+            parameterType="com.xz.library.admin.entity.param.QueryGiveLikeRecordParam">
+        SELECT DISTINCT
+            ni.id AS newsId,
+            uc.id AS commentId,
+            ua.id AS userId,
+            ua.nickname,
+            uc.content,
+            uc.create_time AS createTime,
+            count(gli.comment_id) AS likenumInt,
+            count(DISTINCT ufuc.id) AS childComments
+        FROM
+            news_info ni
+                LEFT JOIN user_comment uc ON uc.news_id = ni.id
+                LEFT JOIN user_account ua ON ua.id = uc.user_id
+                LEFT JOIN give_like_info gli ON gli.comment_id = uc.id
+                LEFT JOIN user_for_user_comment ufuc ON ufuc.comment_id = uc.id
+        WHERE
+            ni.id = #{newsId}
+            AND uc.id IS NOT NULL
+        GROUP BY
+            uc.id,
+            ufuc.id
+        ORDER BY
+            uc.`id`
+
+    </select>
+
+    <select id="queryUserForUserComment"
+            resultType="com.xz.library.admin.entity.result.ChildCommentVO">
+        SELECT ufuc.user_id     AS userId,
+               ua.nickname,
+               ufuc.be_user_id  AS beUserId,
+               bua.nickname     AS beNickname,
+               ufuc.content,
+               ufuc.create_time AS createTime
+        FROM user_for_user_comment ufuc
+                 LEFT JOIN user_account ua ON ua.id = ufuc.user_id
+                 LEFT JOIN user_account bua ON bua.id = ufuc.be_user_id
+        WHERE ufuc.comment_id = #{commentId}
+        ORDER BY ufuc.id DESC
+    </select>
+
+    <select id="queryWhetherGiveLikeById"
+            resultType="java.lang.Integer">
+
+        SELECT
+            count(*)
+        FROM
+            user_comment ucc
+		LEFT JOIN give_like_info gli ON  gli.comment_id = ucc.id
+        WHERE
+            gli.user_id = #{userId}
+        AND gli.comment_id = #{commentId}
+    </select>
+
+
+</mapper>
