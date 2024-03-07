@@ -14,4 +14,8 @@ public class comm {
     public String test1() {
         return "我带你们打";
     }
+
+    public String test2() {
+        return "我带你们打2";
+    }
 }
