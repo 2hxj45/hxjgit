@@ -14,4 +14,10 @@ public class comm {
     public String test1() {
         return "我带你们打";
     }
+    public String  hh(){
+        return "123";
+    }
+    public String hhhh(){
+        return "22222";
+    }
 }
